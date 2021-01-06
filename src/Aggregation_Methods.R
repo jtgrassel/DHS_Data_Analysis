@@ -29,32 +29,46 @@ summaryMerit <- left_join(final, meritUsers, by="UserID") %>%
 view(summaryMerit)
 
 
-#--- Minority Voting---#
+#--- Threshold Voting---#
 minVoteThresholds <- tibble(Threshold=numeric(), AggType=character(), Category=character(), Proportion=numeric())
 
 minVoteData <- allData
 minVoteData <- filter(allData, Spammer==0)
-#minVoteData <-filter(minVoteData, Test=="2_2") #Choose which test
+#minVoteData <-filter(minVoteData, Test=="2_1") #Choose which test
 
 for (threshold in seq(0, 1, 0.025)) {
   confThreshold <- threshold*200-100
   confSqThreshold <- confThreshold*100
   
-  minVote <- minVoteData %>% mutate(ConfAnswer = ifelse(Q1==1, Q2, -1*Q2)) %>%
+  minVote <- minVoteData %>% 
+    mutate(ConfAnswer = ifelse(Q1==1, Q2, -1*Q2)) %>%
     mutate(ConfSqAnswer = ifelse(ConfAnswer<0, -1*ConfAnswer^2, ConfAnswer^2)) %>%
+    mutate(LinMapConfAnswer = ifelse(Q1==1, LinMapConf, -1*LinMapConf)) %>%
     group_by(Test, Prompt, GroundTruth) %>%
-    summarize(PosProp = mean(Q1), ConfPosProp = mean(ConfAnswer), ConfSqPosProp = mean(ConfSqAnswer)) %>%
-    mutate(
+    summarize(
+      PosProp = mean(Q1), 
+      ConfPosProp = mean(ConfAnswer), 
+      ConfSqPosProp = mean(ConfSqAnswer), 
+      LinMapConfPosProp = mean(LinMapConfAnswer))
+  
+minVote <- mutate(minVote, 
       PosPropGuess = ifelse(PosProp>threshold, 1, 0), 
       ConfPosPropGuess = ifelse(ConfPosProp>confThreshold, 1, 0), 
-      ConfSqPosPropGuess = ifelse(ConfSqPosProp>confSqThreshold, 1, 0)) %>%
-    mutate(
+      ConfSqPosPropGuess = ifelse(ConfSqPosProp>confSqThreshold, 1, 0), 
+      LinMapConfPosPropGuess = ifelse(LinMapConfPosProp>confThreshold, 1, 0))
+
+  minVote <- mutate(minVote, 
       PosPropCorrect=ifelse(PosPropGuess==GroundTruth, 1, 0), 
       ConfPosPropCorrect=ifelse(ConfPosPropGuess==GroundTruth, 1, 0), 
-      ConfSqPosPropCorrect=ifelse(ConfSqPosPropGuess==GroundTruth, 1, 0))
+      ConfSqPosPropCorrect=ifelse(ConfSqPosPropGuess==GroundTruth, 1, 0), 
+      LinMapConfPosPropCorrect=ifelse(LinMapConfPosPropGuess==GroundTruth, 1, 0))
   
   minVoteSummary <- minVote %>% group_by(GroundTruth) %>%
-    summarize(ThresholdPropCorrect=mean(PosPropCorrect), ConfThresholdPropCorrect=mean(ConfPosPropCorrect), ConfSqThresholdPropCorrect=mean(ConfSqPosPropCorrect))
+    summarize(
+      ThresholdPropCorrect=mean(PosPropCorrect), 
+      ConfThresholdPropCorrect=mean(ConfPosPropCorrect), 
+      ConfSqThresholdPropCorrect=mean(ConfSqPosPropCorrect), 
+      LinMapConfThresholdPropCorrect=mean(LinMapConfPosPropCorrect))
   
   minVoteThresholds <- minVoteThresholds %>% 
     add_row(Threshold=threshold, AggType="Standard", Category="TrueNeg", Proportion=minVoteSummary$ThresholdPropCorrect[[1]]) %>%
@@ -64,7 +78,10 @@ for (threshold in seq(0, 1, 0.025)) {
     add_row(Threshold=threshold, AggType="Confidence", Category="TruePos", Proportion=minVoteSummary$ConfThresholdPropCorrect[[2]]) %>%
     
     add_row(Threshold=threshold, AggType="ConfidenceSq", Category="TrueNeg", Proportion=minVoteSummary$ConfSqThresholdPropCorrect[[1]]) %>%
-    add_row(Threshold=threshold, AggType="ConfidenceSq", Category="TruePos", Proportion=minVoteSummary$ConfSqThresholdPropCorrect[[2]])
+    add_row(Threshold=threshold, AggType="ConfidenceSq", Category="TruePos", Proportion=minVoteSummary$ConfSqThresholdPropCorrect[[2]]) %>%
+    
+    add_row(Threshold=threshold, AggType="LinMapConf", Category="TrueNeg", Proportion=minVoteSummary$LinMapConfThresholdPropCorrect[[1]]) %>%
+    add_row(Threshold=threshold, AggType="LinMapConf", Category="TruePos", Proportion=minVoteSummary$LinMapConfThresholdPropCorrect[[2]])
 }
 
 plotData <- minVoteThresholds
