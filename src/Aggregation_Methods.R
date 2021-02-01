@@ -34,7 +34,7 @@ minVoteThresholds <- tibble(Threshold=numeric(), AggType=character(), Category=c
 
 minVoteData <- allData
 minVoteData <- filter(allData, Spammer==0)
-#minVoteData <-filter(minVoteData, Test=="2_1") #Choose which test
+minVoteData <-filter(minVoteData, Test=="2_3") #Choose which test
 
 for (threshold in seq(0, 1, 0.025)) {
   confThreshold <- threshold*200-100

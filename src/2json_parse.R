@@ -16,6 +16,7 @@ for (i in seq(1, length(jsonRawPilot))) {
   }
 } 
 rm(i, j)
+rm(jsonRawPilot)
 
 #---- Parse the 2_1 data ----#
 jsonTable2_1 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
@@ -33,6 +34,7 @@ for (i in seq(1, length(jsonRaw2_1))) {
   }
 } 
 rm(i, j)
+rm(jsonRaw2_1)
 
 #---- Parse the 2_2 data ----#
 jsonTable2_2 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
@@ -50,3 +52,22 @@ for (i in seq(1, length(jsonRaw2_2))) {
   }
 } 
 rm(i, j)
+rm(jsonRaw2_2)
+
+#---- Parse the 2_3 data ----#
+jsonTable2_3 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
+for (i in seq(1, length(jsonRaw2_3))) {
+  for (j in seq(1, length(jsonRaw2_3[[i]])-2)) {
+    jsonTable2_3 <- add_row(jsonTable2_3, 
+                            Test = "2_3",
+                            Prompt = j,
+                            UserID=jsonRaw2_3[[i]]["name"][[1]], 
+                            Q1 = jsonRaw2_3[[i]][[j]]$q1, 
+                            Q2 = jsonRaw2_3[[i]][[j]]$q2, 
+                            Q3 = jsonRaw2_3[[i]][[j]]$q3, 
+                            Time = jsonRaw2_3[[i]][[j]]$time
+    )
+  }
+} 
+rm(i, j)
+rm(jsonRaw2_3)
