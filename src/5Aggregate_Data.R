@@ -1,7 +1,8 @@
 #agregate table
 
-allAggData <- group_by(allData, Test, Prompt, GroundTruth, Scale, Density, Image, Color) %>%
-  summarize(
+allAggData <- allData %>% filter(Spammer == 0) %>%
+  group_by(Test, Prompt, GroundTruth, Scale, Density, Image, Color) %>%
+  dplyr::summarize(
     Responses=n(),
     AverageTime=mean(Time),
     PropCorrect=mean(Correct),
@@ -17,6 +18,6 @@ allAggData <- group_by(allData, Test, Prompt, GroundTruth, Scale, Density, Image
 
 
 #linear regression difficulty estimation
-diffModel <- lm(PropCorrect~AverageTime+Scale+Density, data=allAggData)
+diffModel <- lm(PropCorrect~Scale+Density, data=allAggData)
 summary(diffModel)
 allAggData$linDiff <- predict(diffModel,newdata=allAggData,type="response")

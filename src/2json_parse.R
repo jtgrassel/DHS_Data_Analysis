@@ -71,3 +71,24 @@ for (i in seq(1, length(jsonRaw2_3))) {
 } 
 rm(i, j)
 rm(jsonRaw2_3)
+
+#---- Parse the 3_1 data ----#
+jsonTable3_1 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
+for (i in seq(1, length(jsonRaw3_1))) {
+  for (j in seq(1, length(jsonRaw3_1[[i]])-2)) {
+    jsonTable3_1 <- add_row(jsonTable3_1, 
+                            Test = "3_1",
+                            Prompt = j,
+                            UserID=jsonRaw3_1[[i]]["name"][[1]], 
+                            Q1 = jsonRaw3_1[[i]][[j]]$q1, 
+                            Q2 = jsonRaw3_1[[i]][[j]]$q2, 
+                            Q3 = jsonRaw3_1[[i]][[j]]$q3, 
+                            Time = jsonRaw3_1[[i]][[j]]$time,
+                            x = ifelse(is.null(jsonRaw3_1[[i]][[j]]$x), NA, jsonRaw3_1[[i]][[j]]$x),
+                            y = ifelse(is.null(jsonRaw3_1[[i]][[j]]$y), NA, jsonRaw3_1[[i]][[j]]$y)
+    )
+  }
+} 
+rm(i, j)
+rm(jsonRaw3_1)
+

@@ -4,10 +4,10 @@
 treeData <- allAggData
 
 #set.seed(1)
-train = sample(1:nrow(treeData), 0.5*nrow(treeData))
+train = sample(1:nrow(treeData), 1*nrow(treeData))
 
-rf.aggData = randomForest(factor(GroundTruth)~LinMapConfWeight+LinMapConfVar+SPmean+linDiff+AverageTime, 
-                          data = treeData, subset = train, ntree=2000, mtry=4)
+rf.aggData = randomForest(factor(GroundTruth)~LinMapConfWeight+Standard+ConfVar+SPmean+linDiff+AverageTime, 
+                          data = treeData, subset = train, ntree=1000, mtry=3)
 rf.aggData
 
 treeData$predicted <- predict(rf.aggData, treeData)
@@ -34,7 +34,7 @@ unknownDf$logitProb <- predict(logitModel,newdata=unknownDf,type="response")
 
 rf.trainDf <- randomForest(
   factor(GroundTruth)~logitProb,
-  data = trainDf, ntree=5000, mtry=1)
+  data = trainDf, ntree=1000, mtry=1)
 
 rf.trainDf
 
@@ -52,7 +52,7 @@ for (i in seq(1:100)) {
   df <- allAggData
   
   set.seed(i)
-  subsetIndex <- sample(seq(1:nrow(df)),0.5*nrow(df))
+  subsetIndex <- sample(seq(1:nrow(df)),0.8*nrow(df))
   
   trainDf <- df[subsetIndex,]
   unknownDf <- df[-subsetIndex,]
@@ -64,7 +64,7 @@ for (i in seq(1:100)) {
   unknownDf$logitProb <- predict(logitModel,newdata=unknownDf,type="response")
   
   rf.trainDf <- randomForest(
-    factor(GroundTruth)~Standard+ConfVar+LinMapConfWeight+SPmean+linDiff,
+    factor(GroundTruth)~ConfWeight,
     data = trainDf, ntree=5000, mtry=1)
   
   rf.trainDf
@@ -79,9 +79,7 @@ for (i in seq(1:100)) {
   unknownSummaryDf <- rbind(unknownSummaryDf, unknownDf)
 }
 
-trainSummaryDf$Type <- "train"
-unknownSummaryDf$Type <- "unknown"
-
-rfSummaryDf <- rbind(trainSummaryDf, unknownSummaryDf)
-rfSummaryDf <- group_by(rfSummaryDf, Test, Prompt, PropCorrect, Type) %>%
+rfSummaryDf <- group_by(unknownSummaryDf, Test, Prompt, PropCorrect) %>%
   summarise(rfCorrect=mean(rfCorrect))
+
+view(rfSummaryDf)

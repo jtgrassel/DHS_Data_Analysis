@@ -4,10 +4,12 @@ allData <- mutate(allData, Correct=ifelse(Q1==GroundTruth, 1, 0))
 
 #Add  column indicating spammer or not
 data <- allData
-data <- mutate(data, LowTime=ifelse(Time<8, 1, 0))
-data <- group_by(data, UserID) %>% summarise(PropCorrect=mean(Correct), AveTime=mean(Time), LowTimeCount=sum(LowTime), QuestionCount=n()) %>% mutate(LowTimeProp=LowTimeCount/QuestionCount)
+data <- mutate(data, LowTime=ifelse(Time<10, 1, 0))
+data <- group_by(data, UserID) %>% 
+  dplyr::summarise(PropCorrect=mean(Correct), AveTime=mean(Time), LowTimeCount=sum(LowTime), QuestionCount=n()) %>% 
+  mutate(LowTimeProp=LowTimeCount/QuestionCount)
 
-data <- mutate(data, Spammer=ifelse(LowTimeProp>0.5, 1, 0)) %>% select(UserID, Spammer)
+data <- mutate(data, Spammer=ifelse(LowTimeProp>0.7, 1, 0)) %>% select(UserID, Spammer)
 
 allData <- left_join(allData, data, by="UserID")
 rm(data)
@@ -22,7 +24,7 @@ allData <- mutate(allData, ConfidenceSq = ifelse(Q1==1, (Q2^2)/100, (-1*(Q2^2))/
 #Linear Remapping
 data <- allData
 data <- group_by(data, UserID) %>%
-  summarize(Min=min(Q2), Max=max(Q2))
+  dplyr::summarize(Min=min(Q2), Max=max(Q2))
 data <- left_join(allData, data, by="UserID")
 data <- mutate(data, LinMapConf=ifelse(Min==Max, Max, (Q2-Min)*(100/(Max-Min))))
 data <- mutate(data, LinMapConf=ifelse(Q1==1, LinMapConf, -1*LinMapConf))
@@ -32,7 +34,7 @@ rm(data)
 #Get distance sq to the mean of answers
 data <- allData
 data <- group_by(data, Test, Prompt) %>%
-  summarize(
+  dplyr::summarize(
     StandardMean=mean(Q1),
     ConfMean=mean(Confidence),
     ConfSqMean=mean(ConfidenceSq),
@@ -50,3 +52,5 @@ data <- mutate(data,
 data <- select(data, Test:Prompt, ConfDistSq:LinMapConfDistSq)
 allData <- left_join(allData, data, by=c("Test", "UserID", "Prompt"))
 rm(data)
+
+
