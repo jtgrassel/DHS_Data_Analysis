@@ -3,9 +3,11 @@ library(dbscan)
 
 temp <- filter(allData, Test=="3_1", Spammer==0)
 tempLim <- filter(temp, Prompt==2)
+tempLim <- filter(temp, Prompt==12)
 tempLim <- na.omit(tempLim)
 
 ds.temp <- dbscan(tempLim[c("x","y")], eps = 40, minPts = 2)
+ds.temp <- dbscan(tempLim[c("x","y")], eps = 20, minPts = 2)
 print(ds.temp)
 
 tempLim$ds_cluster <- ds.temp$cluster

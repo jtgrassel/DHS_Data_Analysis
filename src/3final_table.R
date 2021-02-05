@@ -1,4 +1,4 @@
-allData <- rbind(jsonTablePilot, jsonTable2_1, jsonTable2_2, jsonTable2_3)
+allData <- rbind.fill(jsonTablePilot, jsonTable2_1, jsonTable2_2, jsonTable2_3, jsonTable3_1)
 
 rm(jsonTablePilot, jsonTable2_1, jsonTable2_2, jsonTable2_3)
 
