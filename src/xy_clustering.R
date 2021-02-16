@@ -1,25 +1,32 @@
-library(factoextra)
 library(dbscan)
 
-temp <- filter(allData, Test=="3_1", Spammer==0)
-tempLim <- filter(temp, Prompt==2)
-tempLim <- filter(temp, Prompt==12)
-tempLim <- na.omit(tempLim)
+temp <- filter(allData, Test=="3_2", Prompt==8, Spammer==0)
+ggplot() +
+  geom_point(data=temp, mapping=aes(x=x, y=y)) +
+  xlim(c(0, 500)) +
+  ylim(c(0, 500))
 
-ds.temp <- dbscan(tempLim[c("x","y")], eps = 40, minPts = 2)
-ds.temp <- dbscan(tempLim[c("x","y")], eps = 20, minPts = 2)
+
+#-----
+temp <- filter(allData, Test=="3_2", Prompt==18, Spammer==0)
+temp <- na.omit(temp)
+
+ds.temp <- dbscan(temp[c("x","y")], eps = 25, minPts = 3)
 print(ds.temp)
 
-tempLim$ds_cluster <- ds.temp$cluster
+temp$ds_cluster <- ds.temp$cluster
 
 ggplot() +
-  geom_point(data=tempLim, mapping=aes(x=x, y=y, color=factor(ds_cluster))) +
+  geom_point(data=temp, mapping=aes(x=x, y=y, color=factor(ds_cluster)), size=4, alpha=.5) +
   xlim(c(0, 500)) +
   ylim(c(0, 500))
 
 
 
+
+
 #k-means clustering
+library(factoextra)
 km.temp <- kmeans(tempLim[c("x","y")], 1, nstart = 25)
 print(km.temp)
 

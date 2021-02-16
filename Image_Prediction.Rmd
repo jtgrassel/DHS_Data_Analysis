@@ -1,6 +1,32 @@
+---
+title: "Image Analysis Journal"
+author: "Joshua Grassel"
+date: "2/9/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Introduction
+A quick intro to how the data is represented. Below is a sample of the data frame.
+```{r}
+#--- Load Raw JSON Files ---#
+library(rjson)
+
+jsonRawPilot <- fromJSON(file= "json_data/PilotTest.json")
+jsonRaw2_1 <- fromJSON(file = "json_data/Test2-1.json")
+jsonRaw2_2 <- fromJSON(file = "json_data/Test2-2.json")
+jsonRaw2_3 <- fromJSON(file = "json_data/Test2-3.json")
+jsonRaw3_1 <- fromJSON(file = "json_data/Test3-1.json")
+jsonRaw3_2 <- fromJSON(file = "json_data/Test3-2.json")
+jsonRaw3_3 <- fromJSON(file = "json_data/Test3-3.json")
+
+#--- Parse JSON Files into Tables ---#
 library(tidyverse)
 
-#---- Parse the Pilot data ----#
+#-- Parse the Pilot data --#
 jsonTablePilot <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
 for (i in seq(1, length(jsonRawPilot))) {
   for (j in seq(0, 13)) {
@@ -18,7 +44,7 @@ for (i in seq(1, length(jsonRawPilot))) {
 rm(i, j)
 rm(jsonRawPilot)
 
-#---- Parse the 2_1 data ----#
+#-- Parse the 2_1 data --#
 jsonTable2_1 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
 for (i in seq(1, length(jsonRaw2_1))) {
   for (j in seq(1, length(jsonRaw2_1[[i]])-2)) {
@@ -36,7 +62,7 @@ for (i in seq(1, length(jsonRaw2_1))) {
 rm(i, j)
 rm(jsonRaw2_1)
 
-#---- Parse the 2_2 data ----#
+#-- Parse the 2_2 data --#
 jsonTable2_2 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
 for (i in seq(1, length(jsonRaw2_2))) {
   for (j in seq(1, length(jsonRaw2_2[[i]])-2)) {
@@ -54,7 +80,7 @@ for (i in seq(1, length(jsonRaw2_2))) {
 rm(i, j)
 rm(jsonRaw2_2)
 
-#---- Parse the 2_3 data ----#
+#-- Parse the 2_3 data --#
 jsonTable2_3 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
 for (i in seq(1, length(jsonRaw2_3))) {
   for (j in seq(1, length(jsonRaw2_3[[i]])-2)) {
@@ -72,7 +98,7 @@ for (i in seq(1, length(jsonRaw2_3))) {
 rm(i, j)
 rm(jsonRaw2_3)
 
-#---- Parse the 3_1 data ----#
+#-- Parse the 3_1 data --#
 jsonTable3_1 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
 for (i in seq(1, length(jsonRaw3_1))) {
   for (j in seq(1, length(jsonRaw3_1[[i]])-2)) {
@@ -92,7 +118,7 @@ for (i in seq(1, length(jsonRaw3_1))) {
 rm(i, j)
 rm(jsonRaw3_1)
 
-#---- Parse the 3_2 data ----#
+#-- Parse the 3_2 data --#
 jsonTable3_2 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
 for (i in seq(1, length(jsonRaw3_2))) {
   for (j in seq(1, length(jsonRaw3_2[[i]])-2)) {
@@ -112,7 +138,7 @@ for (i in seq(1, length(jsonRaw3_2))) {
 rm(i, j)
 rm(jsonRaw3_2)
 
-#---- Parse the 3_3 data ----#
+#-- Parse the 3_3 data --#
 jsonTable3_3 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
 for (i in seq(1, length(jsonRaw3_3))) {
   for (j in seq(1, length(jsonRaw3_3[[i]])-2)) {
@@ -131,4 +157,24 @@ for (i in seq(1, length(jsonRaw3_3))) {
 } 
 rm(i, j)
 rm(jsonRaw3_3)
+```
 
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

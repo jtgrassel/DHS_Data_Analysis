@@ -1,85 +1,68 @@
-#library(tidyverse)
-#library(randomForest)
+library(tidyverse)
+library(randomForest)
 
-treeData <- allAggData
+#Single random forest
+treeData <- filter(allAggData, Test %in% c("3_1","3_2","3_3"))
 
-#set.seed(1)
-train = sample(1:nrow(treeData), 1*nrow(treeData))
-
-rf.aggData = randomForest(factor(GroundTruth)~LinMapConfWeight+Standard+ConfVar+SPmean+linDiff+AverageTime, 
-                          data = treeData, subset = train, ntree=1000, mtry=3)
+rf.aggData = randomForest(factor(GroundTruth)~LinMapConfWeight+dsPropMain+dsPropSecondary+dsPropNoise+dsPropNegative, 
+                          data = treeData, ntree=2000, mtry=3)
 rf.aggData
 
 treeData$predicted <- predict(rf.aggData, treeData)
 treeData$predictCorrect <- ifelse(treeData$predicted==treeData$GroundTruth, 1, 0)
 varImpPlot(rf.aggData)
 
+#Single logistic regression
+df <-allAggData
+
+logitModel <- glm(
+  factor(GroundTruth)~LinMapConfWeight, 
+  data = df, family = "binomial")
+
+df$logitPredict <- predict(logitModel,newdata=df,type="response")
+
+ggplot(data=df,aes(x=factor(GroundTruth),y=logitPredict)) +
+  geom_dotplot(binaxis="y",stackdir="center",binwidth=0.03)
+
+ggplot(data=df,aes(x=LinMapConfWeight,y=logitPredict,color=factor(GroundTruth))) +
+  scale_color_manual(values = c("dark blue","orange"),aesthetics = "color") +
+  geom_point(alpha=0.5,size=3) + 
+  labs(title="GT~LinMapConfWeight")
 
 
-
-#Try to use logistic regression to get a good starting prediction
-df <- allAggData
-
-set.seed(1)
-subsetIndex <- sample(seq(1:nrow(df)),0.5*nrow(df))
-
-trainDf <- df[subsetIndex,]
-unknownDf <- df[-subsetIndex,]
-
-logitModel <- glm(GroundTruth ~ LinMapConfWeight, data=trainDf, family="binomial")
-summary(logitModel)
-
-trainDf$logitProb <- predict(logitModel,newdata=trainDf,type="response")
-unknownDf$logitProb <- predict(logitModel,newdata=unknownDf,type="response")
-
-rf.trainDf <- randomForest(
-  factor(GroundTruth)~logitProb,
-  data = trainDf, ntree=1000, mtry=1)
-
-rf.trainDf
-
-trainDf$rfPredict <- predict(rf.trainDf, trainDf)
-unknownDf$rfPredict <- predict(rf.trainDf, unknownDf)
-
-trainDf <- mutate(trainDf, rfCorrect=ifelse(rfPredict==GroundTruth, 1, 0))
-unknownDf <- mutate(unknownDf, rfCorrect=ifelse(rfPredict==GroundTruth, 1, 0))
 
 #trying multiple times
-trainSummaryDf <- data.frame()
 unknownSummaryDf <- data.frame()
 
 for (i in seq(1:100)) {
-  df <- allAggData
+  df <- filter(allAggData, Test %in% c("3_1","3_2","3_3"))
   
   set.seed(i)
-  subsetIndex <- sample(seq(1:nrow(df)),0.8*nrow(df))
+  subsetIndex <- sample(seq(1:nrow(df)),0.6*nrow(df))
   
   trainDf <- df[subsetIndex,]
   unknownDf <- df[-subsetIndex,]
   
-  logitModel <- glm(GroundTruth ~ LinMapConfWeight, data=trainDf, family="binomial")
-  summary(logitModel)
-  
-  trainDf$logitProb <- predict(logitModel,newdata=trainDf,type="response")
-  unknownDf$logitProb <- predict(logitModel,newdata=unknownDf,type="response")
-  
+  #random forest model
   rf.trainDf <- randomForest(
-    factor(GroundTruth)~ConfWeight,
-    data = trainDf, ntree=5000, mtry=1)
-  
-  rf.trainDf
-  
-  trainDf$rfPredict <- predict(rf.trainDf, trainDf)
+    factor(GroundTruth)~LinMapConfWeight+LinMapConfVar+dsPropMain+dsPropSecondary+dsPropNoise+dsPropNegative,
+    data = trainDf, ntree=1000, mtry=3)
+
   unknownDf$rfPredict <- predict(rf.trainDf, unknownDf)
-  
-  trainDf <- mutate(trainDf, rfCorrect=ifelse(rfPredict==GroundTruth, 1, 0))
   unknownDf <- mutate(unknownDf, rfCorrect=ifelse(rfPredict==GroundTruth, 1, 0))
   
-  trainSummaryDf <- rbind(trainSummaryDf, trainDf)
+  #logistic regression model
+  logitModel <- glm(
+    factor(GroundTruth)~LinMapConfWeight, 
+    data = trainDf, family = "binomial")
+  
+  unknownDf$logitPredict <- predict(logitModel,newdata=unknownDf,type="response")
+  unknownDf <- mutate(unknownDf, logitCorrect=ifelse(ifelse(logitPredict>0.5,1,0)==GroundTruth,1,0))
+  
   unknownSummaryDf <- rbind(unknownSummaryDf, unknownDf)
 }
 
 rfSummaryDf <- group_by(unknownSummaryDf, Test, Prompt, PropCorrect) %>%
-  summarise(rfCorrect=mean(rfCorrect))
+  summarise(rfCorrect=mean(rfCorrect),logitCorrect=mean(logitCorrect))
 
 view(rfSummaryDf)

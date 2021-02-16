@@ -31,26 +31,51 @@ data <- mutate(data, LinMapConf=ifelse(Q1==1, LinMapConf, -1*LinMapConf))
 allData <- left_join(allData, select(data, Test, Prompt, UserID, LinMapConf), by=c("Test", "Prompt", "UserID"))
 rm(data)
 
-#Get distance sq to the mean of answers
-data <- allData
-data <- group_by(data, Test, Prompt) %>%
-  dplyr::summarize(
-    StandardMean=mean(Q1),
-    ConfMean=mean(Confidence),
-    ConfSqMean=mean(ConfidenceSq),
-    LinMapConfMean=mean(LinMapConf)
-  )
-data <- left_join(allData, data, by=c("Test", "Prompt"))
+#DSCAN clustering
+library(dbscan)
+dsdata <- filter(allData, Spammer==0) %>% select(Test, Prompt, UserID, x, y)
+
+dsdata <- na.omit(dsdata)
+outputDf <- tibble(Test=character(),Prompt=numeric(),UserID=character(),cluster=numeric())
+
+test_list <- dsdata %>% group_by(Test) %>% summarise()
+test_list <- as.vector(test_list$Test)
+
+for (test in test_list) {
+  prompt_list <- dsdata %>% filter(Test==test) %>% group_by(Prompt) %>% summarise()
+  prompt_list <- as.vector(prompt_list$Prompt)
+  
+  for (prompt in prompt_list) {
+    
+    temp <- filter(dsdata, Test==test, Prompt==prompt)
+    temp <- na.omit(temp)
+    
+    if (nrow(temp) > 3) {
+      ds.temp <- dbscan(temp[c("x","y")], eps=25, minPts=3)
+      temp$cluster <- ds.temp$cluster
+      
+      vector <- as.vector(table(ds.temp$cluster))
+      
+      if (length(vector)==1 & ds.temp$cluster[[1]]==1) {
+        temp$ClusterCategory <- "Main"
+      }
+      else if (length(vector)==1 & ds.temp$cluster[[1]]==0) {
+        temp$ClusterCategory <- "Noise"
+      }
+      else {
+        vector <- vector[2:length(vector)]
+        maxCluster <- which.max(vector)
+        
+        temp$ClusterCategory[temp$cluster==0] <- "Noise"
+        temp$ClusterCategory[temp$cluster==maxCluster] <- "Main"
+        temp$ClusterCategory[temp$cluster != 0 & temp$cluster != maxCluster] <- "Secondary"
+      }
+      outputDf <- rbind(outputDf, temp[c("Test", "Prompt","UserID","cluster","ClusterCategory")])
+    }
+  }
+}
 
 
-data <- mutate(data, 
-  ConfDistSq=(Confidence-ConfMean)^2,
-  ConfSqDistSq=(ConfidenceSq-ConfSqMean)^2,
-  LinMapConfDistSq=(LinMapConf-LinMapConfMean)^2
-    )
 
-data <- select(data, Test:Prompt, ConfDistSq:LinMapConfDistSq)
-allData <- left_join(allData, data, by=c("Test", "UserID", "Prompt"))
-rm(data)
-
-
+allData <- left_join(allData, outputDf, by=c("Test","Prompt","UserID"))
+rm(list = c("dsdata", "outputDf", "test_list", "prompt_list", "temp", "ds.temp", "maxCluster","prompt","test","vector"))

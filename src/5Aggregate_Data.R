@@ -13,7 +13,11 @@ allAggData <- allData %>% filter(Spammer == 0) %>%
     ConfSqWeight=mean(ConfidenceSq),
     ConfSqVar=var(ConfidenceSq),
     LinMapConfWeight=mean(LinMapConf),
-    LinMapConfVar=var(LinMapConf)
+    LinMapConfVar=var(LinMapConf),
+    dsPropMain=sum(ClusterCategory=="Main", na.rm = TRUE)/n(),
+    dsPropSecondary=sum(ClusterCategory=="Secondary", na.rm = TRUE)/n(),
+    dsPropNoise=sum(ClusterCategory=="Noise", na.rm = TRUE)/n(),
+    dsPropNegative=sum(is.na(ClusterCategory))/n()
   )
 
 
