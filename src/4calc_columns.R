@@ -9,7 +9,7 @@ data <- group_by(data, UserID) %>%
   dplyr::summarise(PropCorrect=mean(Correct), AveTime=mean(Time), LowTimeCount=sum(LowTime), QuestionCount=n()) %>% 
   mutate(LowTimeProp=LowTimeCount/QuestionCount)
 
-data <- mutate(data, Spammer=ifelse(LowTimeProp>0.7, 1, 0)) %>% select(UserID, Spammer)
+data <- mutate(data, Spammer=ifelse(LowTimeProp>=0.75, 1, 0)) %>% select(UserID, Spammer)
 
 allData <- left_join(allData, data, by="UserID")
 rm(data)
@@ -51,7 +51,7 @@ for (test in test_list) {
     temp <- na.omit(temp)
     
     if (nrow(temp) > 3) {
-      ds.temp <- dbscan(temp[c("x","y")], eps=25, minPts=3)
+      ds.temp <- dbscan(temp[c("x","y")], eps=35, minPts=3)
       temp$cluster <- ds.temp$cluster
       
       vector <- as.vector(table(ds.temp$cluster))

@@ -8,7 +8,7 @@ ggplot() +
 
 
 #-----
-temp <- filter(allData, Test=="3_2", Prompt==18, Spammer==0)
+temp <- filter(allData, Test=="3_3", Prompt==5, Spammer==0)
 temp <- na.omit(temp)
 
 ds.temp <- dbscan(temp[c("x","y")], eps = 25, minPts = 3)

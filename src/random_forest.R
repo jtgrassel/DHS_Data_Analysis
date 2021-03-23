@@ -4,8 +4,8 @@ library(randomForest)
 #Single random forest
 treeData <- filter(allAggData, Test %in% c("3_1","3_2","3_3"))
 
-rf.aggData = randomForest(factor(GroundTruth)~LinMapConfWeight+dsPropMain+dsPropSecondary+dsPropNoise+dsPropNegative, 
-                          data = treeData, ntree=2000, mtry=3)
+rf.aggData = randomForest(factor(GroundTruth)~LinMapConfWeight, 
+                          data = treeData, ntree=2000, mtry=1)
 rf.aggData
 
 treeData$predicted <- predict(rf.aggData, treeData)
@@ -34,18 +34,18 @@ ggplot(data=df,aes(x=LinMapConfWeight,y=logitPredict,color=factor(GroundTruth)))
 #trying multiple times
 unknownSummaryDf <- data.frame()
 
-for (i in seq(1:100)) {
+for (i in seq(1:300)) {
   df <- filter(allAggData, Test %in% c("3_1","3_2","3_3"))
   
   set.seed(i)
-  subsetIndex <- sample(seq(1:nrow(df)),0.6*nrow(df))
+  subsetIndex <- sample(seq(1:nrow(df)),0.9*nrow(df))
   
   trainDf <- df[subsetIndex,]
   unknownDf <- df[-subsetIndex,]
   
   #random forest model
   rf.trainDf <- randomForest(
-    factor(GroundTruth)~LinMapConfWeight+LinMapConfVar+dsPropMain+dsPropSecondary+dsPropNoise+dsPropNegative,
+    factor(GroundTruth)~ConfWeight+ConfVar+dsPropMain+dsPropSecondary+dsPropNoise+dsPropNegative,
     data = trainDf, ntree=1000, mtry=3)
 
   unknownDf$rfPredict <- predict(rf.trainDf, unknownDf)
@@ -62,7 +62,7 @@ for (i in seq(1:100)) {
   unknownSummaryDf <- rbind(unknownSummaryDf, unknownDf)
 }
 
-rfSummaryDf <- group_by(unknownSummaryDf, Test, Prompt, PropCorrect) %>%
+rfSummaryDf <- group_by(unknownSummaryDf, Test, Prompt, GroundTruth, PropCorrect) %>%
   summarise(rfCorrect=mean(rfCorrect),logitCorrect=mean(logitCorrect))
 
 view(rfSummaryDf)
