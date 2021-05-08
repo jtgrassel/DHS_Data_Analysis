@@ -5,7 +5,9 @@ allData <- plyr::rbind.fill(
   jsonTable2_3, 
   jsonTable3_1, 
   jsonTable3_2, 
-  jsonTable3_3)
+  jsonTable3_3,
+  jsonTable4_1_1,
+  jsonTable4_1_2)
 
 rm(jsonTablePilot, 
    jsonTable2_1, 
@@ -13,7 +15,9 @@ rm(jsonTablePilot,
    jsonTable2_3, 
    jsonTable3_1, 
    jsonTable3_2,
-   jsonTable3_3)
+   jsonTable3_3,
+   jsonTable4_1_1,
+   jsonTable4_1_2)
 
 additional_params <- read_csv("data/additional_params.csv")
 

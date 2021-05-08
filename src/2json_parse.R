@@ -1,4 +1,7 @@
 library(tidyverse)
+# Parse the json files into tables, then remove them.
+#The tables have the following columns:
+#Test, UserID, Prompt, Q1, Q2, Q3, Time, x, y
 
 #---- Parse the Pilot data ----#
 jsonTablePilot <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
@@ -132,3 +135,46 @@ for (i in seq(1, length(jsonRaw3_3))) {
 rm(i, j)
 rm(jsonRaw3_3)
 
+#---- Parse the 4_1_1 data ----#
+jsonTable4_1_1 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
+for (i in seq(1, length(jsonRaw4_1_1))) {
+  for (j in seq(1, length(jsonRaw4_1_1[[i]])-2)) {
+    sj <- toString(j)
+    
+    jsonTable4_1_1 <- add_row(jsonTable4_1_1, 
+                            Test = "4_1_1",
+                            Prompt = j,
+                            UserID=jsonRaw4_1_1[[i]]["name"][[1]], 
+                            Q1 = jsonRaw4_1_1[[i]][[sj]]$q1, 
+                            Q2 = jsonRaw4_1_1[[i]][[sj]]$q2, 
+                            Q3 = jsonRaw4_1_1[[i]][[sj]]$q3, 
+                            Time = jsonRaw4_1_1[[i]][[sj]]$time,
+                            x = ifelse(is.null(jsonRaw4_1_1[[i]][[sj]]$x), NA, jsonRaw4_1_1[[i]][[sj]]$x),
+                            y = ifelse(is.null(jsonRaw4_1_1[[i]][[sj]]$y), NA, jsonRaw4_1_1[[i]][[sj]]$y)
+    )
+  }
+} 
+rm(i, j, sj)
+rm(jsonRaw4_1_1)
+
+#---- Parse the 4_1_2 data ----#
+jsonTable4_1_2 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
+for (i in seq(1, length(jsonRaw4_1_2))) {
+  for (j in seq(1, length(jsonRaw4_1_2[[i]])-2)) {
+    sj <- toString(j)
+    
+    jsonTable4_1_2 <- add_row(jsonTable4_1_2, 
+                              Test = "4_1_2",
+                              Prompt = j,
+                              UserID=jsonRaw4_1_2[[i]]["name"][[1]], 
+                              Q1 = jsonRaw4_1_2[[i]][[sj]]$q1, 
+                              Q2 = jsonRaw4_1_2[[i]][[sj]]$q2, 
+                              Q3 = jsonRaw4_1_2[[i]][[sj]]$q3, 
+                              Time = jsonRaw4_1_2[[i]][[sj]]$time,
+                              x = ifelse(is.null(jsonRaw4_1_2[[i]][[sj]]$x), NA, jsonRaw4_1_2[[i]][[sj]]$x),
+                              y = ifelse(is.null(jsonRaw4_1_2[[i]][[sj]]$y), NA, jsonRaw4_1_2[[i]][[sj]]$y)
+    )
+  }
+} 
+rm(i, j, sj)
+rm(jsonRaw4_1_2)
