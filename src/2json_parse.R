@@ -200,3 +200,25 @@ for (i in seq(1, length(jsonRaw4_1_3))) {
 } 
 rm(i, j, sj)
 rm(jsonRaw4_1_3)
+
+#---- Parse the 4_1_4 data ----#
+jsonTable4_1_4 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
+for (i in seq(1, length(jsonRaw4_1_4))) {
+  for (j in seq(1, length(jsonRaw4_1_4[[i]])-2)) {
+    sj <- toString(j)
+    
+    jsonTable4_1_4 <- add_row(jsonTable4_1_4, 
+                              Test = "4_1_4",
+                              Prompt = j,
+                              UserID=jsonRaw4_1_4[[i]]["name"][[1]], 
+                              Q1 = jsonRaw4_1_4[[i]][[sj]]$q1, 
+                              Q2 = jsonRaw4_1_4[[i]][[sj]]$q2, 
+                              Q3 = jsonRaw4_1_4[[i]][[sj]]$q3, 
+                              Time = jsonRaw4_1_4[[i]][[sj]]$time,
+                              x = ifelse(is.null(jsonRaw4_1_4[[i]][[sj]]$x), NA, jsonRaw4_1_4[[i]][[sj]]$x),
+                              y = ifelse(is.null(jsonRaw4_1_4[[i]][[sj]]$y), NA, jsonRaw4_1_4[[i]][[sj]]$y)
+    )
+  }
+} 
+rm(i, j, sj)
+rm(jsonRaw4_1_4)
