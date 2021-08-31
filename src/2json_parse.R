@@ -4,7 +4,7 @@ library(tidyverse)
 #Test, UserID, Prompt, Q1, Q2, Q3, Time, x, y
 
 #---- Parse the Pilot data ----#
-jsonTablePilot <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
+jsonTablePilot <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), Gender=character(), Age=numeric(), Edu=character())
 for (i in seq(1, length(jsonRawPilot))) {
   for (j in seq(0, 13)) {
     jsonTablePilot <- add_row(jsonTablePilot,
@@ -14,7 +14,10 @@ for (i in seq(1, length(jsonRawPilot))) {
                             Q1 = jsonRawPilot[[i]][as.character(j)][[1]]$q1, 
                             Q2 = jsonRawPilot[[i]][as.character(j)][[1]]$q2, 
                             Q3 = jsonRawPilot[[i]][as.character(j)][[1]]$q3, 
-                            Time = jsonRawPilot[[i]][as.character(j)][[1]]$time
+                            Time = jsonRawPilot[[i]][as.character(j)][[1]]$time,
+                            Gender = jsonRawPilot[[i]]$demographic$gender,
+                            Age = as.numeric(jsonRawPilot[[i]]$demographic$age),
+                            Edu = jsonRawPilot[[i]]$demographic$education
     )
   }
 } 
@@ -22,7 +25,7 @@ rm(i, j)
 rm(jsonRawPilot)
 
 #---- Parse the 2_1 data ----#
-jsonTable2_1 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
+jsonTable2_1 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), Gender=character(), Age=numeric(), Edu=character())
 for (i in seq(1, length(jsonRaw2_1))) {
   for (j in seq(1, length(jsonRaw2_1[[i]])-2)) {
     jsonTable2_1 <- add_row(jsonTable2_1, 
@@ -32,15 +35,18 @@ for (i in seq(1, length(jsonRaw2_1))) {
                          Q1 = jsonRaw2_1[[i]][[j]]$q1, 
                          Q2 = jsonRaw2_1[[i]][[j]]$q2, 
                          Q3 = jsonRaw2_1[[i]][[j]]$q3, 
-                         Time = jsonRaw2_1[[i]][[j]]$time
-                           )
+                         Time = jsonRaw2_1[[i]][[j]]$time,
+                        Gender = jsonRaw2_1[[i]]$demographic$gender,
+                        Age = as.numeric(jsonRaw2_1[[i]]$demographic$age),
+                        Edu = jsonRaw2_1[[i]]$demographic$education
+    )
   }
 } 
 rm(i, j)
 rm(jsonRaw2_1)
 
 #---- Parse the 2_2 data ----#
-jsonTable2_2 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
+jsonTable2_2 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), Gender=character(), Age=numeric(), Edu=character())
 for (i in seq(1, length(jsonRaw2_2))) {
   for (j in seq(1, length(jsonRaw2_2[[i]])-2)) {
     jsonTable2_2 <- add_row(jsonTable2_2, 
@@ -50,7 +56,10 @@ for (i in seq(1, length(jsonRaw2_2))) {
                             Q1 = jsonRaw2_2[[i]][[j]]$q1, 
                             Q2 = jsonRaw2_2[[i]][[j]]$q2, 
                             Q3 = jsonRaw2_2[[i]][[j]]$q3, 
-                            Time = jsonRaw2_2[[i]][[j]]$time
+                            Time = jsonRaw2_2[[i]][[j]]$time,
+                            Gender = jsonRaw2_2[[i]]$demographic$gender,
+                            Age = as.numeric(jsonRaw2_2[[i]]$demographic$age),
+                            Edu = jsonRaw2_2[[i]]$demographic$education
     )
   }
 } 
@@ -58,7 +67,7 @@ rm(i, j)
 rm(jsonRaw2_2)
 
 #---- Parse the 2_3 data ----#
-jsonTable2_3 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric())
+jsonTable2_3 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), Gender=character(), Age=numeric(), Edu=character())
 for (i in seq(1, length(jsonRaw2_3))) {
   for (j in seq(1, length(jsonRaw2_3[[i]])-2)) {
     jsonTable2_3 <- add_row(jsonTable2_3, 
@@ -68,7 +77,10 @@ for (i in seq(1, length(jsonRaw2_3))) {
                             Q1 = jsonRaw2_3[[i]][[j]]$q1, 
                             Q2 = jsonRaw2_3[[i]][[j]]$q2, 
                             Q3 = jsonRaw2_3[[i]][[j]]$q3, 
-                            Time = jsonRaw2_3[[i]][[j]]$time
+                            Time = jsonRaw2_3[[i]][[j]]$time,
+                            Gender = jsonRaw2_3[[i]]$demographic$gender,
+                            Age = as.numeric(jsonRaw2_3[[i]]$demographic$age),
+                            Edu = jsonRaw2_3[[i]]$demographic$education
     )
   }
 } 
@@ -76,7 +88,7 @@ rm(i, j)
 rm(jsonRaw2_3)
 
 #---- Parse the 3_1 data ----#
-jsonTable3_1 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
+jsonTable3_1 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric(), Gender=character(), Age=numeric(), Edu=character())
 for (i in seq(1, length(jsonRaw3_1))) {
   for (j in seq(1, length(jsonRaw3_1[[i]])-2)) {
     jsonTable3_1 <- add_row(jsonTable3_1, 
@@ -88,7 +100,10 @@ for (i in seq(1, length(jsonRaw3_1))) {
                             Q3 = jsonRaw3_1[[i]][[j]]$q3, 
                             Time = jsonRaw3_1[[i]][[j]]$time,
                             x = ifelse(is.null(jsonRaw3_1[[i]][[j]]$x), NA, jsonRaw3_1[[i]][[j]]$x),
-                            y = ifelse(is.null(jsonRaw3_1[[i]][[j]]$y), NA, jsonRaw3_1[[i]][[j]]$y)
+                            y = ifelse(is.null(jsonRaw3_1[[i]][[j]]$y), NA, jsonRaw3_1[[i]][[j]]$y),
+                            Gender = jsonRaw3_1[[i]]$demographic$gender,
+                            Age = as.numeric(jsonRaw3_1[[i]]$demographic$age),
+                            Edu = jsonRaw3_1[[i]]$demographic$education
     )
   }
 } 
@@ -96,7 +111,7 @@ rm(i, j)
 rm(jsonRaw3_1)
 
 #---- Parse the 3_2 data ----#
-jsonTable3_2 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
+jsonTable3_2 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric(), Gender=character(), Age=numeric(), Edu=character())
 for (i in seq(1, length(jsonRaw3_2))) {
   for (j in seq(1, length(jsonRaw3_2[[i]])-2)) {
     jsonTable3_2 <- add_row(jsonTable3_2, 
@@ -108,7 +123,10 @@ for (i in seq(1, length(jsonRaw3_2))) {
                             Q3 = jsonRaw3_2[[i]][[j]]$q3, 
                             Time = jsonRaw3_2[[i]][[j]]$time,
                             x = ifelse(is.null(jsonRaw3_2[[i]][[j]]$x), NA, jsonRaw3_2[[i]][[j]]$x),
-                            y = ifelse(is.null(jsonRaw3_2[[i]][[j]]$y), NA, jsonRaw3_2[[i]][[j]]$y)
+                            y = ifelse(is.null(jsonRaw3_2[[i]][[j]]$y), NA, jsonRaw3_2[[i]][[j]]$y),
+                            Gender = jsonRaw3_2[[i]]$demographic$gender,
+                            Age = as.numeric(jsonRaw3_2[[i]]$demographic$age),
+                            Edu = jsonRaw3_2[[i]]$demographic$education
     )
   }
 } 
@@ -116,7 +134,7 @@ rm(i, j)
 rm(jsonRaw3_2)
 
 #---- Parse the 3_3 data ----#
-jsonTable3_3 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
+jsonTable3_3 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric(), Gender=character(), Age=numeric(), Edu=character())
 for (i in seq(1, length(jsonRaw3_3))) {
   for (j in seq(1, length(jsonRaw3_3[[i]])-2)) {
     jsonTable3_3 <- add_row(jsonTable3_3, 
@@ -128,7 +146,10 @@ for (i in seq(1, length(jsonRaw3_3))) {
                             Q3 = jsonRaw3_3[[i]][[j]]$q3, 
                             Time = jsonRaw3_3[[i]][[j]]$time,
                             x = ifelse(is.null(jsonRaw3_3[[i]][[j]]$x), NA, jsonRaw3_3[[i]][[j]]$x),
-                            y = ifelse(is.null(jsonRaw3_3[[i]][[j]]$y), NA, jsonRaw3_3[[i]][[j]]$y)
+                            y = ifelse(is.null(jsonRaw3_3[[i]][[j]]$y), NA, jsonRaw3_3[[i]][[j]]$y),
+                            Gender = jsonRaw3_3[[i]]$demographic$gender,
+                            Age = as.numeric(jsonRaw3_3[[i]]$demographic$age),
+                            Edu = jsonRaw3_3[[i]]$demographic$education
     )
   }
 } 
@@ -136,7 +157,7 @@ rm(i, j)
 rm(jsonRaw3_3)
 
 #---- Parse the 4_1_1 data ----#
-jsonTable4_1_1 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
+jsonTable4_1_1 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric(), Gender=character(), Age=numeric(), Edu=character())
 for (i in seq(1, length(jsonRaw4_1_1))) {
   for (j in seq(1, length(jsonRaw4_1_1[[i]])-2)) {
     sj <- toString(j)
@@ -150,7 +171,10 @@ for (i in seq(1, length(jsonRaw4_1_1))) {
                             Q3 = jsonRaw4_1_1[[i]][[sj]]$q3, 
                             Time = jsonRaw4_1_1[[i]][[sj]]$time,
                             x = ifelse(is.null(jsonRaw4_1_1[[i]][[sj]]$x), NA, jsonRaw4_1_1[[i]][[sj]]$x),
-                            y = ifelse(is.null(jsonRaw4_1_1[[i]][[sj]]$y), NA, jsonRaw4_1_1[[i]][[sj]]$y)
+                            y = ifelse(is.null(jsonRaw4_1_1[[i]][[sj]]$y), NA, jsonRaw4_1_1[[i]][[sj]]$y),
+                            Gender = jsonRaw4_1_1[[i]]$demographic$gender,
+                            Age = as.numeric(jsonRaw4_1_1[[i]]$demographic$age),
+                            Edu = jsonRaw4_1_1[[i]]$demographic$education
     )
   }
 } 
@@ -158,7 +182,7 @@ rm(i, j, sj)
 rm(jsonRaw4_1_1)
 
 #---- Parse the 4_1_2 data ----#
-jsonTable4_1_2 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
+jsonTable4_1_2 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric(), Gender=character(), Age=numeric(), Edu=character())
 for (i in seq(1, length(jsonRaw4_1_2))) {
   for (j in seq(1, length(jsonRaw4_1_2[[i]])-2)) {
     sj <- toString(j)
@@ -172,7 +196,10 @@ for (i in seq(1, length(jsonRaw4_1_2))) {
                               Q3 = jsonRaw4_1_2[[i]][[sj]]$q3, 
                               Time = jsonRaw4_1_2[[i]][[sj]]$time,
                               x = ifelse(is.null(jsonRaw4_1_2[[i]][[sj]]$x), NA, jsonRaw4_1_2[[i]][[sj]]$x),
-                              y = ifelse(is.null(jsonRaw4_1_2[[i]][[sj]]$y), NA, jsonRaw4_1_2[[i]][[sj]]$y)
+                              y = ifelse(is.null(jsonRaw4_1_2[[i]][[sj]]$y), NA, jsonRaw4_1_2[[i]][[sj]]$y),
+                              Gender = jsonRaw4_1_2[[i]]$demographic$gender,
+                              Age = as.numeric(jsonRaw4_1_2[[i]]$demographic$age),
+                              Edu = jsonRaw4_1_2[[i]]$demographic$education
     )
   }
 } 
@@ -180,7 +207,7 @@ rm(i, j, sj)
 rm(jsonRaw4_1_2)
 
 #---- Parse the 4_1_3 data ----#
-jsonTable4_1_3 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
+jsonTable4_1_3 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric(), Gender=character(), Age=numeric(), Edu=character())
 for (i in seq(1, length(jsonRaw4_1_3))) {
   for (j in seq(1, length(jsonRaw4_1_3[[i]])-2)) {
     sj <- toString(j)
@@ -194,7 +221,10 @@ for (i in seq(1, length(jsonRaw4_1_3))) {
                               Q3 = jsonRaw4_1_3[[i]][[sj]]$q3, 
                               Time = jsonRaw4_1_3[[i]][[sj]]$time,
                               x = ifelse(is.null(jsonRaw4_1_3[[i]][[sj]]$x), NA, jsonRaw4_1_3[[i]][[sj]]$x),
-                              y = ifelse(is.null(jsonRaw4_1_3[[i]][[sj]]$y), NA, jsonRaw4_1_3[[i]][[sj]]$y)
+                              y = ifelse(is.null(jsonRaw4_1_3[[i]][[sj]]$y), NA, jsonRaw4_1_3[[i]][[sj]]$y),
+                              Gender = jsonRaw4_1_3[[i]]$demographic$gender,
+                              Age = as.numeric(jsonRaw4_1_3[[i]]$demographic$age),
+                              Edu = jsonRaw4_1_3[[i]]$demographic$education
     )
   }
 } 
@@ -202,7 +232,7 @@ rm(i, j, sj)
 rm(jsonRaw4_1_3)
 
 #---- Parse the 4_1_4 data ----#
-jsonTable4_1_4 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric())
+jsonTable4_1_4 <- tibble(Test=character(), UserID=character(), Prompt=numeric(),  Q1=numeric(), Q2=numeric(), Q3=numeric(), Time=numeric(), x=numeric(), y=numeric(), Gender=character(), Age=numeric(), Edu=character())
 for (i in seq(1, length(jsonRaw4_1_4))) {
   for (j in seq(1, length(jsonRaw4_1_4[[i]])-2)) {
     sj <- toString(j)
@@ -216,7 +246,10 @@ for (i in seq(1, length(jsonRaw4_1_4))) {
                               Q3 = jsonRaw4_1_4[[i]][[sj]]$q3, 
                               Time = jsonRaw4_1_4[[i]][[sj]]$time,
                               x = ifelse(is.null(jsonRaw4_1_4[[i]][[sj]]$x), NA, jsonRaw4_1_4[[i]][[sj]]$x),
-                              y = ifelse(is.null(jsonRaw4_1_4[[i]][[sj]]$y), NA, jsonRaw4_1_4[[i]][[sj]]$y)
+                              y = ifelse(is.null(jsonRaw4_1_4[[i]][[sj]]$y), NA, jsonRaw4_1_4[[i]][[sj]]$y),
+                              Gender = jsonRaw4_1_4[[i]]$demographic$gender,
+                              Age = as.numeric(jsonRaw4_1_4[[i]]$demographic$age),
+                              Edu = jsonRaw4_1_4[[i]]$demographic$education
     )
   }
 } 
