@@ -4,12 +4,12 @@ allData <- mutate(allData, Correct=ifelse(Q1==GroundTruth, 1, 0))
 
 #Add  column indicating spammer or not
 data <- allData
-data <- mutate(data, LowTime=ifelse(Time<10, 1, 0))
+data <- mutate(data, LowTime=ifelse(Time<=10, 1, 0))
 data <- group_by(data, UserID) %>% 
-  dplyr::summarise(PropCorrect=mean(Correct), AveTime=mean(Time), LowTimeCount=sum(LowTime), QuestionCount=n()) %>% 
-  mutate(LowTimeProp=LowTimeCount/QuestionCount)
+  dplyr::summarise(PropCorrect=mean(Correct), AveTime=mean(Time), LowTimeCount=sum(LowTime), QuestionCount=n(), Q1SUM = sum(Q1)) %>% 
+  mutate(LowTimeProp=LowTimeCount/QuestionCount, MonoAnswer = Q1SUM/QuestionCount)
 
-data <- mutate(data, Spammer=ifelse(LowTimeProp>=0.75, 1, 0)) %>% select(UserID, Spammer)
+data <- mutate(data, Spammer=ifelse(LowTimeProp>=0.75 | MonoAnswer == 1 | MonoAnswer == 0, 1, 0)) %>% select(UserID, Spammer)
 
 allData <- left_join(allData, data, by="UserID")
 rm(data)

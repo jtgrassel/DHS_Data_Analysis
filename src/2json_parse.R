@@ -59,7 +59,7 @@ for (i in seq(1, length(jsonRaw2_2))) {
                             Time = jsonRaw2_2[[i]][[j]]$time,
                             Gender = jsonRaw2_2[[i]]$demographic$gender,
                             Age = as.numeric(jsonRaw2_2[[i]]$demographic$age),
-                            Edu = jsonRaw2_2[[i]]$demographic$education
+                            Edu = as.character(ifelse(is.null(jsonRaw2_2[[i]]$demographic$education), NA, jsonRaw2_2[[i]]$demographic$education))
     )
   }
 } 
@@ -124,9 +124,9 @@ for (i in seq(1, length(jsonRaw3_2))) {
                             Time = jsonRaw3_2[[i]][[j]]$time,
                             x = ifelse(is.null(jsonRaw3_2[[i]][[j]]$x), NA, jsonRaw3_2[[i]][[j]]$x),
                             y = ifelse(is.null(jsonRaw3_2[[i]][[j]]$y), NA, jsonRaw3_2[[i]][[j]]$y),
-                            Gender = jsonRaw3_2[[i]]$demographic$gender,
+                            Gender = ifelse(is.null(jsonRaw3_2[[i]]$demographic$gender), NA, jsonRaw3_2[[i]]$demographic$gender),
                             Age = as.numeric(jsonRaw3_2[[i]]$demographic$age),
-                            Edu = jsonRaw3_2[[i]]$demographic$education
+                            Edu = ifelse(is.null(jsonRaw3_2[[i]]$demographic$education), NA, jsonRaw3_2[[i]]$demographic$education)
     )
   }
 } 
